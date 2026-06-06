@@ -15,32 +15,25 @@ import java.util.Map;
 public class CloudinaryService {
 
     private final Cloudinary cloudinary;
-    public String upload(MultipartFile file) {
+
+    public Map upload(MultipartFile file) {
         try {
-
-            Map<?, ?> result = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("folder", "imagenes", "resource_type", "auto","transformation"
-                    ,new Transformation().width(600).height(600).crop("pad").quality("auto"), "format", "webp")
+            Map result = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("folder", "imagenes", "resource_type", "auto",
+                    "transformation", new Transformation().width(600).height(600).crop("pad").quality("auto"), "format", "webp")
             );
-            return (String) result.get("secure_url");
-
-
+            return result;
         } catch (IOException e) {
-            throw new RuntimeException("Error al subir imagen a Cloudinary", e);
+            throw new RuntimeException("Error uploading at cloudinary", e);
         }
     }
-/*
-        Dotenv dotenv = Dotenv.load();
-        Cloudinary cloudinary = new Cloudinary(dotenv.get("CLOUDINARY_URL"));
 
-        Map result = cloudinary.uploader().upload(
-                "https://cloudinary-devs.github.io/cld-docs-assets/assets/images/coffee_cup.jpg", ObjectUtils.asMap(
-                        "use_filename", true,
-                        "unique_filename", false,
-                        "overwrite", true,
+    public void delete(String publicId) {
+        try {
+            Map result = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+        } catch (IOException e) {
+            throw new RuntimeException("Error deleting at Cloudinary", e);
+        }
+    }
 
-                        "transformation", new Transformation().width(100).height(100).crop("pad").background("white").quality("auto"),
-                        "format", "webp"));
 
-        System.out.println(result);
-*/
 }

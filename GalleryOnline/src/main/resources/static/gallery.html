@@ -300,6 +300,30 @@
             background: var(--win-bg);
         }
 
+        .tile-actions {
+            display: flex;
+            justify-content: flex-end;
+            padding: 3px 6px 5px;
+            background: var(--win-bg);
+            border-top: 1px solid var(--win-border-dark);
+        }
+
+        .btn-delete {
+            padding: 2px 8px;
+            font-family: 'Cousine', monospace;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid var(--win-red);
+            background: var(--win-white);
+            color: var(--win-red);
+        }
+
+        .btn-delete:hover {
+            background: var(--win-red);
+            color: #fff;
+        }
+
         /* UPLOAD PANEL */
         .upload-panel {
             background: var(--win-bg);
@@ -732,6 +756,9 @@
         <img src="${escapeHtml(img.url)}" alt="${escapeHtml(img.alt)}" loading="lazy">
       </div>
       <div class="tile-label" title="${escapeHtml(img.alt)}">${escapeHtml(img.alt) || 'Sin descripci\u00f3n'}</div>
+      <div class="tile-actions">
+        <button class="btn-delete" onclick="event.stopPropagation(); deleteImage(${img.id})">&#128465; Eliminar</button>
+      </div>
     </div>
   `).join('');
     }
@@ -805,6 +832,24 @@
         }
     }
 
+    async function deleteImage(id) {
+        if (!confirm('¿Seguro que querés eliminar esta imagen? Esta acción no se puede deshacer.')) return;
+        setStatus('Eliminando imagen...', 'loading');
+        try {
+            const res = await fetch(`${API}/gallery/delete/${id}`, {
+                method: 'DELETE',
+                headers: authHeaders()
+            });
+            if (!res.ok) { showToast('Error al eliminar la imagen.', 'error'); setStatus('Error', 'error'); return; }
+            showToast('Imagen eliminada correctamente.', 'success');
+            setStatus('Imagen eliminada');
+            await loadImages();
+        } catch (err) {
+            showToast('Error de conexión con el servidor.', 'error');
+            setStatus('Sin conexión', 'error');
+        }
+    }
+
     if (!getToken()) {
         window.location.href = 'index.html';
     } else {
@@ -818,6 +863,7 @@
     window.logout = logout;
     window.loadGalleries = loadGalleries;
     window.loadImages = loadImages;
+    window.deleteImage = deleteImage;
 </script>
 </body>
 </html>

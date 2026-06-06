@@ -16,7 +16,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -42,8 +44,8 @@ public class GalleryController {
             @AuthenticationPrincipal UserDetails userDetails
     ) {
         Gallery gallery = galleryService.getGalleryById(galleryId, userDetails.getUsername());
-        String url = cloudinaryService.upload(file);
-        Image image = new Image(null, alt, url, gallery);
+        Map result = cloudinaryService.upload(file);
+        Image image = new Image(null, alt, (String) result.get("secure_url"), (String) result.get("public_id"), gallery);
         return ResponseEntity.status(HttpStatus.CREATED).body(imageService.createImage(image));
     }
 
@@ -57,6 +59,12 @@ public class GalleryController {
     public ResponseEntity<List<Image>> galleryImages(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
         galleryService.getGalleryById(id, userDetails.getUsername());
         return ResponseEntity.ok().body(imageService.obtainByGallery(id));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) throws IOException {
+        imageService.deleteImage(id);
+        return ResponseEntity.ok().build();
     }
 
 }

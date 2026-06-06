@@ -9,4 +9,7 @@ import java.util.List;
 @Repository
 public interface ImageRepository extends JpaRepository<Image, Long> {
     List<Image> findByGalleryId(Long idGallery);
+
+
+    Image findImageById(Long id);
 }

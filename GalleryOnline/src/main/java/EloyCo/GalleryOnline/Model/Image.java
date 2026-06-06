@@ -22,6 +22,9 @@ public class Image {
     @Column(name = "url", length = 255)
     private String url;
 
+    @Column(name ="public_id")
+    private String publicId;
+
     @ManyToOne
     @JoinColumn(name = "id_gallery")
     private Gallery gallery;
