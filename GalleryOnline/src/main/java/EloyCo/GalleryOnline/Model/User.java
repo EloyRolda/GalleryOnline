@@ -1,5 +1,6 @@
 package EloyCo.GalleryOnline.Model;
 
+import EloyCo.GalleryOnline.Model.Enum.TypeRole;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,7 +30,7 @@ public class User {
 
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Column(name = "password", length = 50, nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
 

@@ -1,10 +1,447 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalleryOnline · Acceso</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&family=Cousine:wght@400;700&display=swap');
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --win-bg: #C0C0C0;
+            --win-white: #FFFFFF;
+            --win-blue: #0078D7;
+            --win-blue-dark: #003C74;
+            --win-gray-dark: #808080;
+            --win-gray-mid: #A0A0A0;
+            --win-border-dark: #404040;
+            --win-border-light: #DFDFDF;
+            --win-red: #E81123;
+            --win-text: #000000;
+            --win-title-text: #FFFFFF;
+            --shadow: 2px 2px 0 #808080;
+        }
+
+        body {
+            background: var(--win-bg);
+            background-image:
+                    repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.03) 1px, rgba(0,0,0,0.03) 2px),
+                    repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(0,0,0,0.03) 1px, rgba(0,0,0,0.03) 2px);
+            font-family: 'Cousine', 'Courier New', monospace;
+            color: var(--win-text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        /* WINDOW */
+        .window {
+            width: 100%;
+            max-width: 420px;
+            border: 1px solid var(--win-border-dark);
+            border-right-color: var(--win-border-light);
+            border-bottom-color: var(--win-border-light);
+            background: var(--win-bg);
+            box-shadow: 2px 2px 0 #000, inset 1px 1px 0 var(--win-border-light);
+        }
+
+        .window-titlebar {
+            background: linear-gradient(90deg, var(--win-blue), var(--win-blue-dark));
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 6px;
+            gap: 6px;
+        }
+
+        .window-title {
+            font-family: 'VT323', monospace;
+            font-size: 18px;
+            color: var(--win-title-text);
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .title-icon {
+            width: 16px; height: 16px;
+            background: var(--win-white);
+            border: 1px solid var(--win-border-dark);
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 11px; line-height: 1;
+        }
+
+        .win-controls {
+            display: flex; gap: 3px;
+        }
+
+        .win-btn {
+            width: 16px; height: 14px;
+            border: 1px solid var(--win-border-dark);
+            border-right-color: var(--win-border-light);
+            border-bottom-color: var(--win-border-light);
+            background: var(--win-bg);
+            cursor: pointer;
+            font-size: 9px;
+            font-family: 'Cousine', monospace;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; color: var(--win-text);
+        }
+
+        .win-btn.close { background: var(--win-red); color: #fff; }
+        .win-btn:active { border-color: var(--win-border-light); border-right-color: var(--win-border-dark); border-bottom-color: var(--win-border-dark); }
+
+        .window-body { padding: 16px; }
+
+        /* LOGO / HEADER */
+        .app-header {
+            text-align: center;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--win-gray-dark);
+        }
+
+        .app-logo {
+            font-family: 'VT323', monospace;
+            font-size: 32px;
+            color: var(--win-blue);
+            letter-spacing: 2px;
+            text-shadow: 1px 1px 0 var(--win-blue-dark);
+        }
+
+        .app-sub {
+            font-size: 11px;
+            color: var(--win-gray-dark);
+            margin-top: 2px;
+            font-family: 'Cousine', monospace;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: -1px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tab {
+            padding: 5px 16px;
+            font-family: 'Cousine', monospace;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid var(--win-border-dark);
+            border-bottom: none;
+            background: var(--win-gray-mid);
+            color: var(--win-text);
+            margin-right: 3px;
+            position: relative;
+            top: 2px;
+            transition: none;
+        }
+
+        .tab.active {
+            background: var(--win-white);
+            border-bottom: 1px solid var(--win-white);
+            top: 0;
+            z-index: 2;
+            color: var(--win-blue);
+        }
+
+        .tab:not(.active):hover { background: var(--win-bg); }
+
+        /* PANEL */
+        .tab-panel {
+            background: var(--win-white);
+            border: 1px solid var(--win-border-dark);
+            padding: 16px;
+            display: none;
+        }
+
+        .tab-panel.active { display: block; }
+
+        /* FORM ELEMENTS */
+        .field {
+            margin-bottom: 12px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: var(--win-text);
+            font-family: 'Cousine', monospace;
+        }
+
+        .field input {
+            width: 100%;
+            border: 1px solid var(--win-border-dark);
+            border-right-color: var(--win-border-light);
+            border-bottom-color: var(--win-border-light);
+            background: var(--win-white);
+            padding: 5px 8px;
+            font-family: 'Cousine', monospace;
+            font-size: 13px;
+            outline: none;
+            color: var(--win-text);
+        }
+
+        .field input:focus {
+            border-color: var(--win-blue);
+            box-shadow: 0 0 0 2px rgba(0,120,215,0.25);
+        }
+
+        /* BUTTON */
+        .btn {
+            display: inline-block;
+            padding: 5px 20px;
+            font-family: 'Cousine', monospace;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid var(--win-border-dark);
+            border-right-color: var(--win-border-light);
+            border-bottom-color: var(--win-border-light);
+            background: var(--win-bg);
+            color: var(--win-text);
+            box-shadow: inset 1px 1px 0 var(--win-border-light);
+            text-align: center;
+            transition: none;
+        }
+
+        .btn:hover { background: #d4d0c8; }
+        .btn:active {
+            border-color: var(--win-border-light);
+            border-right-color: var(--win-border-dark);
+            border-bottom-color: var(--win-border-dark);
+            box-shadow: none;
+            padding: 6px 19px 4px 21px;
+        }
+
+        .btn-primary {
+            background: var(--win-blue);
+            color: #fff;
+            border-color: var(--win-blue-dark);
+            border-right-color: #5ba7e0;
+            border-bottom-color: #5ba7e0;
+            width: 100%;
+        }
+
+        .btn-primary:hover { background: #006cc1; }
+
+        /* STATUS BAR */
+        .statusbar {
+            background: var(--win-bg);
+            border-top: 1px solid var(--win-border-dark);
+            padding: 3px 8px;
+            font-size: 11px;
+            color: var(--win-gray-dark);
+            font-family: 'Cousine', monospace;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #00b050;
+            display: inline-block;
+        }
+
+        /* ERROR / MSG */
+        .msg {
+            font-size: 11px;
+            padding: 5px 8px;
+            margin-top: 8px;
+            font-family: 'Cousine', monospace;
+            display: none;
+        }
+
+        .msg.error {
+            background: #ffeded;
+            border: 1px solid var(--win-red);
+            color: var(--win-red);
+            display: block;
+        }
+
+        .msg.info {
+            background: #e6f3ff;
+            border: 1px solid var(--win-blue);
+            color: var(--win-blue-dark);
+            display: block;
+        }
+
+        /* TOOLTIP-STYLE DIVIDER */
+        .divider {
+            border: none;
+            border-top: 1px solid var(--win-gray-mid);
+            margin: 12px 0;
+        }
+
+        .form-footer {
+            font-size: 11px;
+            color: var(--win-gray-dark);
+            margin-top: 6px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-$END$
+
+<div class="window">
+    <!-- TITLE BAR -->
+    <div class="window-titlebar">
+        <div class="window-title">
+            <span class="title-icon">&#128444;</span>
+            GalleryOnline v1.0
+        </div>
+        <div class="win-controls">
+            <div class="win-btn">_</div>
+            <div class="win-btn">&#9633;</div>
+            <div class="win-btn close">&#10005;</div>
+        </div>
+    </div>
+
+    <!-- BODY -->
+    <div class="window-body">
+        <div class="app-header">
+            <div class="app-logo">&#128444; GALLERY ONLINE</div>
+            <div class="app-sub">visualiza &bull; organiza &bull; comparte</div>
+        </div>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <div class="tab active" id="tab-login-btn" onclick="switchTab('login')">Iniciar sesi&oacute;n</div>
+            <div class="tab" id="tab-register-btn" onclick="switchTab('register')">Registrarse</div>
+        </div>
+
+        <!-- LOGIN PANEL -->
+        <div class="tab-panel active" id="login-panel">
+            <div class="field">
+                <label>&#128231; Direcci&oacute;n de email:</label>
+                <input type="email" id="login-email" placeholder="usuario@ejemplo.com">
+            </div>
+            <div class="field">
+                <label>&#128274; Contrase&ntilde;a:</label>
+                <input type="password" id="login-password" placeholder="••••••••">
+            </div>
+            <hr class="divider">
+            <button class="btn btn-primary" onclick="login()">&#9658; ENTRAR</button>
+            <div id="login-error" class="msg"></div>
+        </div>
+
+        <!-- REGISTER PANEL -->
+        <div class="tab-panel" id="register-panel">
+            <div class="field">
+                <label>&#128100; Nombre completo:</label>
+                <input type="text" id="register-name" placeholder="Mar&iacute;a Garc&iacute;a">
+            </div>
+            <div class="field">
+                <label>&#128231; Direcci&oacute;n de email:</label>
+                <input type="email" id="register-email" placeholder="nombre@ejemplo.com">
+            </div>
+            <div class="field">
+                <label>&#128274; Contrase&ntilde;a:</label>
+                <input type="password" id="register-password" placeholder="m&iacute;nimo 6 caracteres">
+            </div>
+            <hr class="divider">
+            <button class="btn btn-primary" onclick="register()">&#9658; CREAR CUENTA</button>
+            <div id="register-error" class="msg"></div>
+        </div>
+    </div>
+
+    <!-- STATUS BAR -->
+    <div class="statusbar">
+        <span class="status-dot"></span>
+        <span id="status-text">Listo</span>
+    </div>
+</div>
+
+<script>
+    const API = 'http://localhost:8080';
+
+    function setStatus(text) {
+        document.getElementById('status-text').textContent = text;
+    }
+
+    function switchTab(tab) {
+        document.getElementById('login-panel').classList.toggle('active', tab === 'login');
+        document.getElementById('register-panel').classList.toggle('active', tab === 'register');
+        document.getElementById('tab-login-btn').classList.toggle('active', tab === 'login');
+        document.getElementById('tab-register-btn').classList.toggle('active', tab === 'register');
+        document.getElementById('login-error').className = 'msg';
+        document.getElementById('register-error').className = 'msg';
+    }
+
+    function showError(id, msg) {
+        const el = document.getElementById(id);
+        el.textContent = '[ ERROR ] ' + msg;
+        el.className = 'msg error';
+    }
+
+    async function login() {
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        if (!email || !password) { showError('login-error', 'Complet\u00e1 email y contrase\u00f1a.'); return; }
+        setStatus('Conectando...');
+        try {
+            const res = await fetch(`${API}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            if (!res.ok) { showError('login-error', 'Email o contrase\u00f1a incorrectos.'); setStatus('Error de autenticaci\u00f3n'); return; }
+            const data = await res.json();
+            localStorage.setItem('token', data.token);
+            setStatus('Sesi\u00f3n iniciada. Redirigiendo...');
+            window.location.href = 'gallery.html';
+        } catch (err) {
+            showError('login-error', 'Error de conexi\u00f3n con el servidor.');
+            setStatus('Sin conexi\u00f3n');
+        }
+    }
+
+    async function register() {
+        const name = document.getElementById('register-name').value;
+        const email = document.getElementById('register-email').value;
+        const password = document.getElementById('register-password').value;
+        if (!name || !email || !password) { showError('register-error', 'Todos los campos son obligatorios.'); return; }
+        setStatus('Creando cuenta...');
+        try {
+            const res = await fetch(`${API}/user/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password })
+            });
+            if (!res.ok) { showError('register-error', 'El email puede estar en uso.'); setStatus('Error al registrar'); return; }
+            setStatus('Cuenta creada. Iniciando sesi\u00f3n...');
+            const loginRes = await fetch(`${API}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await loginRes.json();
+            localStorage.setItem('token', data.token);
+            window.location.href = 'gallery.html';
+        } catch (err) {
+            showError('register-error', 'Error de red. Intent\u00e1 de nuevo.');
+            setStatus('Sin conexi\u00f3n');
+        }
+    }
+
+    if (localStorage.getItem('token')) window.location.href = 'gallery.html';
+
+    window.switchTab = switchTab;
+    window.login = login;
+    window.register = register;
+</script>
 </body>
 </html>

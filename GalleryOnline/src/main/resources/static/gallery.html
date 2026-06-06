@@ -1,10 +1,823 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GalleryOnline · Mis Galerías</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&family=Cousine:wght@400;700&display=swap');
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --win-bg: #C0C0C0;
+            --win-white: #FFFFFF;
+            --win-blue: #0078D7;
+            --win-blue-dark: #003C74;
+            --win-gray-dark: #808080;
+            --win-gray-mid: #A0A0A0;
+            --win-border-dark: #404040;
+            --win-border-light: #DFDFDF;
+            --win-red: #E81123;
+            --win-text: #000000;
+        }
+
+        body {
+            background: var(--win-bg);
+            background-image:
+                    repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,0.03) 1px, rgba(0,0,0,0.03) 2px),
+                    repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(0,0,0,0.03) 1px, rgba(0,0,0,0.03) 2px);
+            font-family: 'Cousine', 'Courier New', monospace;
+            color: var(--win-text);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        /* MAIN WINDOW */
+        .window {
+            max-width: 1300px;
+            margin: 0 auto;
+            border: 1px solid var(--win-border-dark);
+            border-right-color: var(--win-border-light);
+            border-bottom-color: var(--win-border-light);
+            background: var(--win-bg);
+            box-shadow: 2px 2px 0 #000, inset 1px 1px 0 var(--win-border-light);
+        }
+
+        .window-titlebar {
+            background: linear-gradient(90deg, var(--win-blue), var(--win-blue-dark));
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 6px;
+        }
+
+        .window-title {
+            font-family: 'VT323', monospace;
+            font-size: 18px;
+            color: #fff;
+            letter-spacing: 1px;
+            display: flex; align-items: center; gap: 6px;
+        }
+
+        .title-icon {
+            width: 16px; height: 16px;
+            background: #fff;
+            border: 1px solid var(--win-border-dark);
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 11px; line-height: 1;
+        }
+
+        .win-controls { display: flex; gap: 3px; }
+
+        .win-btn {
+            width: 16px; height: 14px;
+            border: 1px solid var(--win-border-dark);
+            border-right-color: var(--win-border-light);
+            border-bottom-color: var(--win-border-light);
+            background: var(--win-bg);
+            cursor: pointer;
+            font-size: 9px; font-family: 'Cousine', monospace;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold;
+        }
+
+        .win-btn.close { background: var(--win-red); color: #fff; }
+
+        /* MENUBAR */
+        .menubar {
+            background: var(--win-bg);
+            border-bottom: 1px solid var(--win-gray-mid);
+            padding: 3px 8px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .menu-item {
+            padding: 2px 10px;
+            font-size: 12px;
+            font-family: 'Cousine', monospace;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: var(--win-blue);
+            color: #fff;
+            border-color: var(--win-border-dark);
+        }
+
+        .menu-sep { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+
+        /* TOOLBAR */
+        .toolbar {
+            background: var(--win-bg);
+            border-bottom: 1px solid var(--win-gray-dark);
+            padding: 4px 8px;
+            display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+        }
+
+        .toolbar-btn {
+            padding: 3px 14px;
+            font-family: 'Cousine', monospace;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid var(--win-border-dark);
+            border-right-color: var(--win-border-light);
+            border-bottom-color: var(--win-border-light);
+            background: var(--win-bg);
+            color: var(--win-text);
+            box-shadow: inset 1px 1px 0 var(--win-border-light);
+        }
+
+        .toolbar-btn:hover { background: #d4d0c8; }
+        .toolbar-btn:active {
+            border-color: var(--win-border-light);
+            border-right-color: var(--win-border-dark);
+            border-bottom-color: var(--win-border-dark);
+            box-shadow: none;
+        }
+
+        .toolbar-btn.primary {
+            background: var(--win-blue);
+            color: #fff;
+            border-color: var(--win-blue-dark);
+        }
+
+        .toolbar-btn.primary:hover { background: #006cc1; }
+
+        .toolbar-sep {
+            width: 1px; height: 24px;
+            background: var(--win-gray-dark);
+            margin: 0 4px;
+        }
+
+        .toolbar-input {
+            border: 1px solid var(--win-border-dark);
+            border-right-color: var(--win-border-light);
+            border-bottom-color: var(--win-border-light);
+            background: var(--win-white);
+            padding: 3px 8px;
+            font-family: 'Cousine', monospace;
+            font-size: 12px;
+            width: 220px;
+            outline: none;
+        }
+
+        .toolbar-input:focus { border-color: var(--win-blue); }
+
+        /* CONTENT AREA */
+        .content {
+            background: var(--win-white);
+            border: 1px solid var(--win-border-dark);
+            margin: 8px;
+            min-height: 400px;
+            padding: 12px;
+        }
+
+        /* PANEL HEADERS (like Explorer section headers) */
+        .section-header {
+            background: var(--win-blue);
+            color: #fff;
+            font-family: 'VT323', monospace;
+            font-size: 20px;
+            letter-spacing: 1px;
+            padding: 4px 12px;
+            margin: -12px -12px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* GALLERY LIST TABLE */
+        .gallery-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            font-family: 'Cousine', monospace;
+        }
+
+        .gallery-table thead tr {
+            background: var(--win-blue);
+            color: #fff;
+        }
+
+        .gallery-table th {
+            padding: 5px 10px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 12px;
+            border: 1px solid var(--win-blue-dark);
+        }
+
+        .gallery-table tbody tr {
+            border-bottom: 1px solid #e8e8e8;
+            cursor: pointer;
+        }
+
+        .gallery-table tbody tr:hover {
+            background: #d4e9ff;
+        }
+
+        .gallery-table tbody tr.selected {
+            background: var(--win-blue);
+            color: #fff;
+        }
+
+        .gallery-table td {
+            padding: 5px 10px;
+            border-right: 1px solid #e8e8e8;
+        }
+
+        .gallery-table td:first-child { padding-left: 14px; }
+
+        .folder-icon { font-size: 16px; margin-right: 6px; }
+
+        /* EMPTY STATE */
+        .empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--win-gray-dark);
+            font-size: 13px;
+            border: 1px dashed var(--win-gray-mid);
+            margin: 16px 0;
+            font-family: 'Cousine', monospace;
+        }
+
+        .empty .big-icon { font-size: 48px; display: block; margin-bottom: 8px; }
+
+        /* IMAGE GRID */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .image-tile {
+            border: 1px solid var(--win-border-dark);
+            border-right-color: var(--win-border-light);
+            border-bottom-color: var(--win-border-light);
+            background: var(--win-white);
+            box-shadow: inset 1px 1px 0 var(--win-border-light);
+            overflow: hidden;
+            cursor: pointer;
+            transition: none;
+        }
+
+        .image-tile:hover {
+            border-color: var(--win-blue);
+            background: #e8f4ff;
+        }
+
+        .image-tile:hover .tile-img-wrap { border-bottom-color: var(--win-blue); }
+
+        .tile-img-wrap {
+            width: 100%;
+            aspect-ratio: 1;
+            background: var(--win-bg);
+            overflow: hidden;
+            border-bottom: 1px solid var(--win-border-dark);
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .tile-img-wrap img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .tile-label {
+            padding: 5px 8px;
+            font-size: 11px;
+            font-family: 'Cousine', monospace;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--win-text);
+            background: var(--win-bg);
+        }
+
+        /* UPLOAD PANEL */
+        .upload-panel {
+            background: var(--win-bg);
+            border: 1px solid var(--win-border-dark);
+            border-right-color: var(--win-border-light);
+            border-bottom-color: var(--win-border-light);
+            padding: 10px 14px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .up-field label {
+            display: block;
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 3px;
+            color: var(--win-text);
+        }
+
+        .up-field input[type="text"],
+        .up-field input[type="file"] {
+            border: 1px solid var(--win-border-dark);
+            border-right-color: var(--win-border-light);
+            border-bottom-color: var(--win-border-light);
+            background: var(--win-white);
+            padding: 4px 8px;
+            font-family: 'Cousine', monospace;
+            font-size: 12px;
+            outline: none;
+            width: 200px;
+        }
+
+        .up-field input:focus { border-color: var(--win-blue); }
+
+        /* TOAST / MSG */
+        .toast {
+            padding: 6px 12px;
+            font-size: 12px;
+            font-family: 'Cousine', monospace;
+            margin-top: 6px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toast.error { background: #ffeded; border: 1px solid var(--win-red); color: var(--win-red); display: flex; }
+        .toast.success { background: #e8ffed; border: 1px solid #107C10; color: #107C10; display: flex; }
+        .toast.info { background: #e6f3ff; border: 1px solid var(--win-blue); color: var(--win-blue-dark); display: flex; }
+
+        /* STATUSBAR */
+        .statusbar {
+            background: var(--win-bg);
+            border-top: 1px solid var(--win-border-dark);
+            padding: 3px 8px;
+            font-size: 11px;
+            color: var(--win-gray-dark);
+            font-family: 'Cousine', monospace;
+            display: flex; align-items: center; gap: 6px;
+        }
+
+        .status-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #00b050;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
+        /* MODAL LIGHTBOX */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-overlay.open { display: flex; }
+
+        .modal-window {
+            border: 1px solid var(--win-border-dark);
+            border-right-color: var(--win-border-light);
+            border-bottom-color: var(--win-border-light);
+            background: var(--win-bg);
+            box-shadow: 4px 4px 0 #000, inset 1px 1px 0 var(--win-border-light);
+            max-width: 90vw;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-titlebar {
+            background: linear-gradient(90deg, var(--win-blue), var(--win-blue-dark));
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 6px;
+            flex-shrink: 0;
+            cursor: move;
+            user-select: none;
+        }
+
+        .modal-title {
+            font-family: 'VT323', monospace;
+            font-size: 17px;
+            color: #fff;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 400px;
+        }
+
+        .modal-body {
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .modal-body img {
+            max-width: 85vw;
+            max-height: 78vh;
+            object-fit: contain;
+            display: block;
+        }
+
+        .modal-footer {
+            background: var(--win-bg);
+            border-top: 1px solid var(--win-border-dark);
+            padding: 4px 10px;
+            font-size: 11px;
+            font-family: 'Cousine', monospace;
+            color: var(--win-gray-dark);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        /* BREADCRUMB */
+        .breadcrumb {
+            font-size: 12px;
+            font-family: 'Cousine', monospace;
+            padding: 4px 8px;
+            background: var(--win-bg);
+            border-bottom: 1px solid var(--win-gray-mid);
+            color: var(--win-gray-dark);
+        }
+
+        .breadcrumb span { color: var(--win-text); }
+    </style>
 </head>
 <body>
-$END$
+
+<div class="window">
+    <!-- TITLE BAR -->
+    <div class="window-titlebar">
+        <div class="window-title">
+            <span class="title-icon">&#128444;</span>
+            GalleryOnline &mdash; Mis Galer&iacute;as
+        </div>
+        <div class="win-controls">
+            <div class="win-btn">_</div>
+            <div class="win-btn">&#9633;</div>
+            <div class="win-btn close" onclick="logout()">&#10005;</div>
+        </div>
+    </div>
+
+    <!-- MENU BAR -->
+    <div class="menubar">
+        <div class="menu-item">Archivo</div>
+        <div class="menu-item">Ver</div>
+        <div class="menu-item">Herramientas</div>
+        <div class="menu-sep">
+            <div class="menu-item" onclick="logout()" style="color:var(--win-red);">&#128274; Cerrar sesi&oacute;n</div>
+        </div>
+    </div>
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb" id="breadcrumb-bar">
+        &#128444; GalleryOnline &rsaquo; <span>Mis Galer&iacute;as</span>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar" id="galleries-toolbar">
+        <input class="toolbar-input" type="text" id="new-gallery-name" placeholder="Nombre de nueva galer&iacute;a&hellip;">
+        <button class="toolbar-btn primary" onclick="createGallery()">&#43; Nueva galer&iacute;a</button>
+        <div class="toolbar-sep"></div>
+        <button class="toolbar-btn" onclick="loadGalleries()">&#8635; Actualizar</button>
+    </div>
+
+    <div class="toolbar" id="images-toolbar" style="display:none;">
+        <button class="toolbar-btn" onclick="backToGalleries()">&#8592; Volver</button>
+        <div class="toolbar-sep"></div>
+        <span id="toolbar-gallery-name" style="font-size:13px;font-weight:bold;font-family:'Cousine',monospace;padding:0 6px;"></span>
+        <div class="toolbar-sep"></div>
+        <button class="toolbar-btn" onclick="loadImages()">&#8635; Actualizar</button>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast-bar" class="toast" style="margin:6px 8px 0;"></div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+        <!-- GALLERIES SECTION -->
+        <div id="gallery-section">
+            <div class="section-header">
+                &#128194; MIS GALERÍAS
+                <span style="font-size:13px;font-family:'Cousine',monospace;" id="gallery-count"></span>
+            </div>
+
+            <table class="gallery-table" id="gallery-table">
+                <thead>
+                <tr>
+                    <th style="width:40px;">#</th>
+                    <th>Nombre de galer&iacute;a</th>
+                    <th style="width:160px;">Acci&oacute;n</th>
+                </tr>
+                </thead>
+                <tbody id="galleries-tbody">
+                <tr><td colspan="3"><div class="empty"><span class="big-icon">&#128194;</span>Cargando galer&iacute;as&hellip;</div></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- IMAGES SECTION -->
+        <div id="images-section" style="display:none;">
+            <div class="section-header" id="images-section-title">
+                &#128444; IMÁGENES
+            </div>
+
+            <!-- UPLOAD PANEL -->
+            <div class="upload-panel">
+                <div class="up-field">
+                    <label>&#128221; Texto alternativo (alt):</label>
+                    <input type="text" id="upload-alt" placeholder="Describe la imagen">
+                </div>
+                <div class="up-field">
+                    <label>&#128193; Archivo de imagen:</label>
+                    <input type="file" id="upload-file" accept="image/*">
+                </div>
+                <button class="toolbar-btn primary" onclick="uploadImage()">&#8593; Subir imagen</button>
+            </div>
+
+            <div id="images-grid-container" class="image-grid">
+                <!-- dynamic -->
+            </div>
+        </div>
+
+    </div><!-- end .content -->
+
+    <!-- STATUS BAR -->
+    <div class="statusbar">
+        <span class="status-dot" id="status-dot"></span>
+        <span id="status-text">Listo</span>
+    </div>
+</div>
+
+<!-- LIGHTBOX MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-window" id="modal-window">
+        <div class="modal-titlebar">
+            <div class="modal-title" id="modal-title">&#128444; Imagen</div>
+            <div class="win-controls">
+                <div class="win-btn close" onclick="closeModalDirect()">&#10005;</div>
+            </div>
+        </div>
+        <div class="modal-body">
+            <img id="modal-img" src="" alt="">
+        </div>
+        <div class="modal-footer">
+            <span id="modal-alt-text"></span>
+            <span style="display:flex;gap:6px;align-items:center;">
+        <button class="toolbar-btn" onclick="navigateModal(-1)" style="padding:2px 10px;font-size:13px;">&#8592;</button>
+        <span id="modal-nav" style="min-width:50px;text-align:center;"></span>
+        <button class="toolbar-btn" onclick="navigateModal(1)" style="padding:2px 10px;font-size:13px;">&#8594;</button>
+      </span>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API = 'http://localhost:8080';
+    let currentGalleryId = null;
+
+    function getToken() { return localStorage.getItem('token'); }
+    function authHeaders() {
+        return { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' };
+    }
+
+    function setStatus(text, type) {
+        document.getElementById('status-text').textContent = text;
+        const dot = document.getElementById('status-dot');
+        dot.style.background = type === 'error' ? '#E81123' : type === 'loading' ? '#FFC300' : '#00b050';
+    }
+
+    function showToast(msg, type) {
+        const el = document.getElementById('toast-bar');
+        el.textContent = (type === 'error' ? '[ ERROR ] ' : type === 'success' ? '[ OK ] ' : '[ INFO ] ') + msg;
+        el.className = 'toast ' + type;
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => { el.className = 'toast'; }, 5000);
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+
+    function logout() {
+        localStorage.removeItem('token');
+        window.location.href = 'index.html';
+    }
+
+    async function loadGalleries() {
+        setStatus('Cargando galer\u00edas...', 'loading');
+        try {
+            const res = await fetch(`${API}/gallery/mygallery`, { headers: authHeaders() });
+            if (res.status === 401 || res.status === 403) { logout(); return; }
+            const galleries = await res.json();
+            renderGalleries(galleries);
+            setStatus(`${galleries.length} galer\u00eda(s) encontrada(s)`);
+            document.getElementById('gallery-count').textContent = galleries.length + ' elemento(s)';
+        } catch (err) {
+            document.getElementById('galleries-tbody').innerHTML = `<tr><td colspan="3"><div class="empty">&#9888; Error al cargar galer\u00edas.</div></td></tr>`;
+            setStatus('Error de conexi\u00f3n', 'error');
+        }
+    }
+
+    function renderGalleries(galleries) {
+        const tbody = document.getElementById('galleries-tbody');
+        if (!galleries.length) {
+            tbody.innerHTML = `<tr><td colspan="3"><div class="empty"><span class="big-icon">&#128194;</span>No ten\u00e9s galer\u00edas. \u00a1Cre\u00e1 una arriba!</div></td></tr>`;
+            return;
+        }
+        tbody.innerHTML = galleries.map((g, i) => `
+    <tr ondblclick="openGallery(${g.id}, '${escapeHtml(g.gallery_name).replace(/'/g,"\\'")}')">
+      <td>${i + 1}</td>
+      <td><span class="folder-icon">&#128194;</span>${escapeHtml(g.gallery_name)}</td>
+      <td><button class="toolbar-btn" style="font-size:11px;padding:2px 10px;" onclick="openGallery(${g.id}, '${escapeHtml(g.gallery_name).replace(/'/g,"\\'")}')">&#128065; Abrir</button></td>
+    </tr>
+  `).join('');
+    }
+
+    async function createGallery() {
+        const name = document.getElementById('new-gallery-name').value.trim();
+        if (!name) { showToast('Escrib\u00ed un nombre para la galer\u00eda.', 'error'); return; }
+        setStatus('Creando galer\u00eda...', 'loading');
+        try {
+            const res = await fetch(`${API}/gallery/create`, {
+                method: 'POST',
+                headers: authHeaders(),
+                body: JSON.stringify({ gallery_name: name })
+            });
+            if (!res.ok) { showToast('Error al crear galer\u00eda.', 'error'); setStatus('Error', 'error'); return; }
+            document.getElementById('new-gallery-name').value = '';
+            showToast(`Galer\u00eda "${name}" creada correctamente.`, 'success');
+            loadGalleries();
+        } catch (e) {
+            showToast('Error de conexi\u00f3n.', 'error');
+            setStatus('Sin conexi\u00f3n', 'error');
+        }
+    }
+
+    async function openGallery(id, name) {
+        currentGalleryId = id;
+        document.getElementById('images-section-title').textContent = '\uD83D\uDDBC\uFE0F ' + name.toUpperCase();
+        document.getElementById('toolbar-gallery-name').textContent = name;
+        document.getElementById('breadcrumb-bar').innerHTML = `\uD83D\uDDBC\uFE0F GalleryOnline &rsaquo; <span>Mis Galer\u00edas</span> &rsaquo; <span><strong>${escapeHtml(name)}</strong></span>`;
+        document.getElementById('gallery-section').style.display = 'none';
+        document.getElementById('images-section').style.display = 'block';
+        document.getElementById('galleries-toolbar').style.display = 'none';
+        document.getElementById('images-toolbar').style.display = 'flex';
+        document.getElementById('upload-alt').value = '';
+        document.getElementById('upload-file').value = '';
+        document.getElementById('toast-bar').className = 'toast';
+        await loadImages();
+    }
+
+    function backToGalleries() {
+        currentGalleryId = null;
+        document.getElementById('images-section').style.display = 'none';
+        document.getElementById('gallery-section').style.display = 'block';
+        document.getElementById('images-toolbar').style.display = 'none';
+        document.getElementById('galleries-toolbar').style.display = 'flex';
+        document.getElementById('breadcrumb-bar').innerHTML = `\uD83D\uDDBC\uFE0F GalleryOnline &rsaquo; <span>Mis Galer\u00edas</span>`;
+        document.getElementById('toast-bar').className = 'toast';
+        loadGalleries();
+    }
+
+    async function loadImages() {
+        if (!currentGalleryId) return;
+        setStatus('Cargando im\u00e1genes...', 'loading');
+        try {
+            const res = await fetch(`${API}/gallery/${currentGalleryId}/images`, { headers: authHeaders() });
+            if (!res.ok) throw new Error();
+            const images = await res.json();
+            renderImages(images);
+            setStatus(`${images.length} imagen(es)`);
+        } catch (err) {
+            document.getElementById('images-grid-container').innerHTML = `<div class="empty">&#9888; Error al cargar im\u00e1genes.</div>`;
+            setStatus('Error', 'error');
+        }
+    }
+
+    let currentImages = [];
+    let currentImageIndex = 0;
+
+    function renderImages(images) {
+        currentImages = images;
+        const container = document.getElementById('images-grid-container');
+        if (!images.length) {
+            container.innerHTML = `<div class="empty" style="grid-column:1/-1;"><span class="big-icon">&#128444;</span>Esta galer\u00eda est\u00e1 vac\u00eda. Sub\u00ed tu primera imagen.</div>`;
+            return;
+        }
+        container.innerHTML = images.map((img, i) => `
+    <div class="image-tile" onclick="openModal(${i})">
+      <div class="tile-img-wrap">
+        <img src="${escapeHtml(img.url)}" alt="${escapeHtml(img.alt)}" loading="lazy">
+      </div>
+      <div class="tile-label" title="${escapeHtml(img.alt)}">${escapeHtml(img.alt) || 'Sin descripci\u00f3n'}</div>
+    </div>
+  `).join('');
+    }
+
+    function openModal(index) {
+        currentImageIndex = index;
+        const img = currentImages[index];
+        document.getElementById('modal-img').src = img.url;
+        document.getElementById('modal-img').alt = img.alt || '';
+        document.getElementById('modal-title').textContent = '\uD83D\uDDBC\uFE0F ' + (img.alt || 'Imagen');
+        document.getElementById('modal-alt-text').textContent = img.alt || 'Sin descripci\u00f3n';
+        document.getElementById('modal-nav').textContent = `${index + 1} / ${currentImages.length}`;
+        document.getElementById('modal-overlay').classList.add('open');
+        setStatus(`Viendo imagen ${index + 1} de ${currentImages.length}`);
+    }
+
+    function closeModal(event) {
+        if (event.target === document.getElementById('modal-overlay')) closeModalDirect();
+    }
+
+    function closeModalDirect() {
+        document.getElementById('modal-overlay').classList.remove('open');
+        document.getElementById('modal-img').src = '';
+        setStatus('Listo');
+    }
+
+    function navigateModal(dir) {
+        const next = (currentImageIndex + dir + currentImages.length) % currentImages.length;
+        openModal(next);
+    }
+
+    document.addEventListener('keydown', e => {
+        const overlay = document.getElementById('modal-overlay');
+        if (!overlay.classList.contains('open')) return;
+        if (e.key === 'Escape') closeModalDirect();
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigateModal(1);
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') navigateModal(-1);
+    });
+
+    window.openModal = openModal;
+    window.closeModal = closeModal;
+    window.closeModalDirect = closeModalDirect;
+    window.navigateModal = navigateModal;
+
+    async function uploadImage() {
+        const altText = document.getElementById('upload-alt').value.trim();
+        const fileInput = document.getElementById('upload-file');
+        const file = fileInput.files[0];
+        if (!file) { showToast('Selecion\u00e1 un archivo de imagen.', 'error'); return; }
+        if (!currentGalleryId) return;
+        setStatus('Subiendo imagen...', 'loading');
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('alt', altText || 'sin descripci\u00f3n');
+        formData.append('galleryId', currentGalleryId);
+        try {
+            const res = await fetch(`${API}/gallery/upload`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${getToken()}` },
+                body: formData
+            });
+            if (!res.ok) { showToast('Error al subir imagen. Verific\u00e1 formato o permisos.', 'error'); setStatus('Error al subir', 'error'); return; }
+            showToast('Imagen subida correctamente.', 'success');
+            document.getElementById('upload-alt').value = '';
+            fileInput.value = '';
+            setStatus('Imagen subida');
+            await loadImages();
+        } catch (err) {
+            showToast('Error de conexi\u00f3n con el servidor.', 'error');
+            setStatus('Sin conexi\u00f3n', 'error');
+        }
+    }
+
+    if (!getToken()) {
+        window.location.href = 'index.html';
+    } else {
+        loadGalleries();
+    }
+
+    window.createGallery = createGallery;
+    window.openGallery = openGallery;
+    window.backToGalleries = backToGalleries;
+    window.uploadImage = uploadImage;
+    window.logout = logout;
+    window.loadGalleries = loadGalleries;
+    window.loadImages = loadImages;
+</script>
 </body>
 </html>
