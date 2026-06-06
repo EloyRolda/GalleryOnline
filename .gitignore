@@ -1,2 +1,8 @@
 GalleryOnline/cloudinaryConfig.env
 GalleryOnline/src/main/java/EloyCo/GalleryOnline/Service/JwtService.java
+src/main/resources/application.properties
+src/main/resources/application.yml
+target/
+.idea/
+*.iml
+*.log
