@@ -820,7 +820,20 @@
                 headers: { 'Authorization': `Bearer ${getToken()}` },
                 body: formData
             });
-            if (!res.ok) { showToast('Error al subir imagen. Verific\u00e1 formato o permisos.', 'error'); setStatus('Error al subir', 'error'); return; }
+
+            if (!res.ok) {
+                let mensaje = `Error ${res.status}`;
+                try {
+                    const error = await res.json();
+                    mensaje = error.message || error.error || mensaje;
+                } catch {
+                    mensaje = `Error ${res.status} - ${res.statusText}`;
+                }
+                showToast(mensaje, 'error');
+                setStatus('Error al subir', 'error');
+                return;
+            }
+
             showToast('Imagen subida correctamente.', 'success');
             document.getElementById('upload-alt').value = '';
             fileInput.value = '';
