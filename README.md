@@ -11,13 +11,19 @@ Aplicación web para organizar y almacenar imágenes en galerías personales. Ca
 ## 📸 Screenshots
 
 ### Login y Registro
-![Login y Registro](1_Home_Login_And_Register.png)
+![Login y Registro](showcase/1_Home_Login_And_Register.png)
 
 ### Mis Galerías
-![Mis Galerías](2_Gallery_Home.png)
+![Mis Galerías](showcase/2_Gallery_Home.png)
 
 ### Vista de Galería
-![Vista de Galería](3_In_gallery.png)
+![Vista de Galería](showcase/3_In_gallery.png)
+
+
+
+
+
+
 
 ---
 
